@@ -1,95 +1,90 @@
 package controller;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
-public class MainController implements Initializable {
+public class MainController {
 
     @FXML
-    private ComboBox<String> comboBox;
+    private TitledPane titledPaneModels;
 
     @FXML
     private TreeView<String> treeView;
 
     @FXML
-    private TitledPane titledLineup;
-
-    @FXML
-    private TitledPane titledModels;
+    private ComboBox<String> comboBoxLines;
 
     @FXML
     private Accordion accordion;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        comboBox.setItems(FXCollections.observableArrayList("Cronos", "Ares"));
+    private final Map<String, Map<String, List<String>>> modelsPerLine = new HashMap<>();
 
-        comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                treeReference(newValue);
-            }
-        });
+    @FXML
+    public void initialize() {
+        titledPaneModels.setDisable(true);
+        initializeComboBox();
+        initializeModelsByLine();
     }
 
-    public void treeReference(String newValue) {
-        TreeItem<String> rootItem = new TreeItem<>(newValue);
+    private void initializeComboBox() {
+        ObservableList<String> lines = FXCollections.observableArrayList("Cronos", "Ares");
+        comboBoxLines.setItems(lines);
+        comboBoxLines.setOnAction(event -> handleLineSelection());
+    }
 
-        if ("Cronos".equals(newValue)) {
-            // CRONOS CATEGORY
-            TreeItem<String> categoryItem1 = new TreeItem<>("Cronos NG");
-            TreeItem<String> categoryItem2 = new TreeItem<>("Cronos Old");
-            TreeItem<String> categoryItem3 = new TreeItem<>("Cronos L");
-
-            // CRONOS NG
-            TreeItem<String> modelItem1 = new TreeItem<>("Cronos 6001-NG");
-            TreeItem<String> modelItem2 = new TreeItem<>("Cronos 6003-NG");
-            TreeItem<String> modelItem3 = new TreeItem<>("Cronos 6021-NG");
-            TreeItem<String> modelItem4 = new TreeItem<>("Cronos 6031-NG");
-            TreeItem<String> modelItem5 = new TreeItem<>("Cronos 7021-NG");
-            TreeItem<String> modelItem6 = new TreeItem<>("Cronos 7023-NG");
-
-            // CRONOS Old
-            TreeItem<String> modelItem7 = new TreeItem<>("Cronos 6001-A");
-            TreeItem<String> modelItem8 = new TreeItem<>("Cronos 6003");
-            TreeItem<String> modelItem9 = new TreeItem<>("Cronos 7023");
-
-            // CRONOS L
-            TreeItem<String> modelItem10 = new TreeItem<>("Cronos 6021L");
-            TreeItem<String> modelItem11 = new TreeItem<>("Cronos 6021L");
-            TreeItem<String> modelItem12 = new TreeItem<>("Cronos 7023L");
-
-            categoryItem1.getChildren().addAll(modelItem1, modelItem2, modelItem3, modelItem4, modelItem5, modelItem6);
-            categoryItem2.getChildren().addAll(modelItem7, modelItem8, modelItem9);
-            categoryItem3.getChildren().addAll(modelItem10, modelItem11, modelItem12);
-
-            rootItem.getChildren().addAll(categoryItem1, categoryItem2, categoryItem3);
+    @FXML
+    private void handleLineSelection() {
+        String selectedLine = comboBoxLines.getValue();
+        if (selectedLine != null) {
+            titledPaneModels.setDisable(false);
+            displayModels(selectedLine);
         }
-        if ("Ares".equals(newValue)) {
-            // ARES CATEGORY
-            TreeItem<String> categoryItem1 = new TreeItem<>("Ares TB");
-            TreeItem<String> categoryItem2 = new TreeItem<>("Ares THS");
+    }
 
-            // ARES TB
-            TreeItem<String> modelItem1 = new TreeItem<>("ARES 7021");
-            TreeItem<String> modelItem2 = new TreeItem<>("ARES 7031");
-            TreeItem<String> modelItem3 = new TreeItem<>("ARES 7023");
+    private void initializeModelsByLine() {
+        modelsPerLine.put("Cronos", createCronosModels());
+        modelsPerLine.put("Ares", createAresModels());
+    }
+    
+    private Map<String, List<String>> createCronosModels() {
+        Map<String, List<String>> modelsCronos = new LinkedHashMap<>();
+        //CRONOS CATEGORY
+        modelsCronos.put("Cronos Old", Arrays.asList("Cronos 6001-A", "Cronos 6003", "Cronos 7023"));
+        modelsCronos.put("Cronos L", Arrays.asList("Cronos 6021L", "Cronos 6021L", "Cronos 7023L"));
+        modelsCronos.put("Cronos-NG", Arrays.asList("Cronos 6001-NG", "Cronos 6003-NG", "Cronos 6021-NG", "Cronos 6031-NG", "Cronos 7021-NG", "Cronos 7023-NG"));
+        return modelsCronos;
+    }
 
-            // ARES THS
-            TreeItem<String> modelItem4 = new TreeItem<>("ARES 8023 15");
-            TreeItem<String> modelItem5 = new TreeItem<>("ARES 8023 200");
-            TreeItem<String> modelItem6 = new TreeItem<>("ARES 8023 2,5");
+    private Map<String, List<String>> createAresModels() {
+        Map<String, List<String>> modelsAres = new LinkedHashMap<>();
+        //ARES CATEGORY
+        modelsAres.put("Ares TB", Arrays.asList("ARES 7021", "ARES 7031", "ARES 7023"));
+        modelsAres.put("Ares THS", Arrays.asList("ARES 8023 15", "ARES 8023 200", "ARES 8023 2,5"));
+        return modelsAres;
+    }
 
-            categoryItem1.getChildren().addAll(modelItem1, modelItem2, modelItem3);
-            categoryItem2.getChildren().addAll(modelItem4, modelItem5, modelItem6);
-
-            rootItem.getChildren().addAll(categoryItem1, categoryItem2);
+    private void displayModels(String selectedLine) {
+        if (selectedLine != null) {
+            Map<String, List<String>> subcategories = modelsPerLine.get(selectedLine);
+            if (subcategories != null) {
+                TreeItem<String> rootItem = new TreeItem<>(selectedLine);
+                subcategories.forEach((subcategory, models) -> {
+                    TreeItem<String> subcategoryItem = new TreeItem<>(subcategory);
+                    models.forEach(model -> subcategoryItem.getChildren().add(new TreeItem<>(model)));
+                    rootItem.getChildren().add(subcategoryItem);
+                });
+                treeView.setRoot(rootItem);
+                expandModels();
+            }
         }
+    }
 
-        treeView.setRoot(rootItem);
+    private void expandModels() {
+        titledPaneModels.setExpanded(true);
+        accordion.setExpandedPane(accordion.getPanes().get(1));
     }
 }
