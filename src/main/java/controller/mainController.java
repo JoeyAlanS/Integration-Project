@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 
 import java.util.*;
 
-public class MainController {
+public class mainController {
 
     @FXML
     private TitledPane titledPaneModels;
@@ -49,7 +49,7 @@ public class MainController {
         modelsPerLine.put("Cronos", createCronosModels());
         modelsPerLine.put("Ares", createAresModels());
     }
-    
+
     private Map<String, List<String>> createCronosModels() {
         Map<String, List<String>> modelsCronos = new LinkedHashMap<>();
         //CRONOS CATEGORY
@@ -79,7 +79,7 @@ public class MainController {
             treeView.setRoot(rootItem);
             expandModels();
         }
-	}
+    }
 
     private void expandModels() {
         titledPaneModels.setExpanded(true);
