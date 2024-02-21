@@ -68,20 +68,18 @@ public class MainController {
     }
 
     private void displayModels(String selectedLine) {
-        if (selectedLine != null) {
-            Map<String, List<String>> subcategories = modelsPerLine.get(selectedLine);
-            if (subcategories != null) {
-                TreeItem<String> rootItem = new TreeItem<>(selectedLine);
-                subcategories.forEach((subcategory, models) -> {
-                    TreeItem<String> subcategoryItem = new TreeItem<>(subcategory);
-                    models.forEach(model -> subcategoryItem.getChildren().add(new TreeItem<>(model)));
-                    rootItem.getChildren().add(subcategoryItem);
-                });
-                treeView.setRoot(rootItem);
-                expandModels();
-            }
+        Map<String, List<String>> subcategories = modelsPerLine.get(selectedLine);
+        if (subcategories != null) {
+            TreeItem<String> rootItem = new TreeItem<>(selectedLine);
+            subcategories.forEach((subcategory, models) -> {
+                TreeItem<String> subcategoryItem = new TreeItem<>(subcategory);
+                models.forEach(model -> subcategoryItem.getChildren().add(new TreeItem<>(model)));
+                rootItem.getChildren().add(subcategoryItem);
+            });
+            treeView.setRoot(rootItem);
+            expandModels();
         }
-    }
+	}
 
     private void expandModels() {
         titledPaneModels.setExpanded(true);
