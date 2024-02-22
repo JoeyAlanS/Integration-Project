@@ -15,17 +15,17 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/resources/MainView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/mainView.fxml"));
 
             Scene scene = new Scene(root, 600, 325);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Projeto de integração");
 
-            String iconPath = "file:src/icons/icon_logo_eletra.png";
+            String iconPath = "file:src/main/resources/icon_logo_eletra.png";
             Image icon = new Image(iconPath);
             primaryStage.getIcons().add(icon);
 
-            String cssPath = Objects.requireNonNull(getClass().getResource("/resources/styles.css")).toExternalForm();
+            String cssPath = Objects.requireNonNull(getClass().getResource("/styles.css")).toExternalForm();
             scene.getStylesheets().add(cssPath);
 
             primaryStage.show();
